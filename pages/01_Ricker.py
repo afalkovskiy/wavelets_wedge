@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import hilbert
 import math
+import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
 
@@ -57,6 +58,7 @@ with col1:
     phase = phi * pi/180
     x_rotate = math.cos(phase)*z.real - math.sin(phase)*z.imag
 
+fig = go.Figure()
 with col1:
     if envelope:
         chart_data = pd.DataFrame(
@@ -78,13 +80,12 @@ with col1:
            }
         )
 
-        st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
+        # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
+        fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red', width=2)))
 
-    # st.subheader(str1)
-      
+        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True))
+        st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
-    # dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
-    # wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
 
 length1 = 0.6
 dt1=0.001
