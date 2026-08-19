@@ -59,7 +59,7 @@ with col1:
     phase = phi * pi/180
     x_rotate = math.cos(phase)*z.real - math.sin(phase)*z.imag
 
-fig = go.Figure()
+# fig = go.Figure()
 with col1:
     if envelope:
         chart_data = pd.DataFrame(
