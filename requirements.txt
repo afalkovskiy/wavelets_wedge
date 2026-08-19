@@ -1,7 +1,7 @@
-streamlit
+streamlit==1.42.0
 numpy
 pandas
 matplotlib
 scipy
-plotly==5.22.0
+plotly==6.0.0
 math
