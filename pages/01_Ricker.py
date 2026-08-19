@@ -15,37 +15,16 @@ refl_arr =[]
 
 st.title(r"Ricker wavelet: Wedge model")
 
-# col00, col10, col20 = st.columns(3)
-# with col00:
-#     st.text('Select model parameters')
-# with col10:
-#     dr = st.slider('Reflector interval (sec)', value=0.1, min_value=0.01, max_value=0.5, step=0.01, format="%.2f")
-
-# # with col20:
-# #     nr = st.number_input('Number of reflectors', min_value=1, max_value=20, value=8, step=1)
-
-# nr = 8
-
-# with col20:
-#     wedge_shift = st.number_input('Wedge shift (ms)', min_value=0, max_value=20, value=10, step=1)
-
-# st.write('The number of reflectors is ', nr,'Reflector interval: ', dr)
-# str0 = "Model: " + str(int(nr)) + " reflectors, distance between reflectors: " + str(dr) + " sec"
-# st.subheader(str0)
 
 def ricker(f, length=0.512, dt=0.001):
     t = np.linspace(-length/2, (length-dt)/2, int(length/dt))
     y = (1.-2.*(np.pi**2)*(f**2)*(t**2))*np.exp(-(np.pi**2)*(f**2)*(t**2))
     return t, y
 
-# st.text('Select wavelet parameters')
-# st.latex(r'''
-# Ricker(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
-# ''') 
 
 col100, col200, col300 = st.columns(3)
 with col100:
-         f = st.slider('Frequency from [1, 240] Hz', value=30., min_value=1., max_value=240., step=1., format="%.1f")   
+         f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f")   
 with col200:
         phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")
 with col300:
@@ -99,8 +78,7 @@ with col1:
         st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
 
     dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
-    # wedge_shift = st.number_input('Wedge shift (ms)', min_value=0, max_value=20, value=10, step=1)
-    wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=10, step=1)
+    wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
 
 length1 = 0.6
 dt1=0.001
@@ -133,15 +111,15 @@ for j in range(nTraces):
         if res == 3:
             rf = 0.5  
             # ni = ns*(i + 1) + int(j*ns/20) - ns
-            ni = ns*(i + 1) + j*wedge_samples - ns + 2
+            ni = ns*(i + 1) + j*wedge_samples - ns + 1
         if res == 4:
             rf = -0.5 
             # ni = ns*(i + 1) + int(j*ns/20) - ns
-            ni = ns*(i + 1) + j*wedge_samples - ns + 2
+            ni = ns*(i + 1) + j*wedge_samples - ns + 1
         if res == 5:
             rf = 0.5  
             # ni = ns*(i + 1) + int(j*ns/20) -ns
-            ni = ns*(i + 1) + j*wedge_samples - ns + 2
+            ni = ns*(i + 1) + j*wedge_samples - ns + 1
 
         if ni > len(y1) - 1:
             ni = len(y1)
@@ -151,7 +129,7 @@ for j in range(nTraces):
         y1[ni] = rf
 
     refl_arr.append(y1)
-    y2 = 2*np.convolve(refl_arr[j], x_rotate, mode='same')
+    y2 = 1.5*np.convolve(refl_arr[j], x_rotate, mode='same')
 
     # print('y1 size: ', y1.size)
     # print('y2 size: ', y2.size)
@@ -162,7 +140,7 @@ for j in range(nTraces):
 
     trace_arr.append(y2)
 # reflectivity plot
-fig1 = plt.figure(figsize=(4,5))
+fig1 = plt.figure(figsize=(4,4))
 
 plt.subplot(111)
 # plt.plot(y1, x1)
@@ -176,7 +154,7 @@ plt.xlabel("Reflectivity")
 plt.ylabel("Two-way time (ms)")
 
 # trace display
-fig2 = plt.figure(figsize=(4,5), alpha=.45)
+fig2 = plt.figure(figsize=(4,4), alpha=.45)
 # fig2.suptitle('Convolved')
 plt.xlabel("Synthetic trace")
 plt.ylabel("Two-way time (ms)")
