@@ -80,11 +80,11 @@ with col1:
            }
         )
 
-        # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
-        fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red', width=2)))
+        st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
+        # fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red', width=2)))
 
-        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True))
-        st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
+        # fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True))
+        # st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
 
 length1 = 0.6
