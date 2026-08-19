@@ -24,13 +24,16 @@ def ricker(f, length=0.512, dt=0.001):
 
 col100, col200, col300 = st.columns(3)
 with col100:
-         f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f")   
+         f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+         phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
 with col200:
-        phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")
+        # phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")
+        dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
+        wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
 with col300:
     envelope = st.checkbox('Envelope')    
 
-str1 = "Ricker " + str(int(f + 0.5)) + " Hz, Phase = " + str(int(phi+0.5)) + "°"
+str1 = "Ricker wavelet " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
 # st.subheader(str1)
 
 col1, col2, col3 = st.columns(3)
@@ -77,8 +80,11 @@ with col1:
 
         st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
 
-    dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
-    wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
+    # st.subheader(str1)
+      
+
+    # dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
+    # wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
 
 length1 = 0.6
 dt1=0.001
@@ -150,13 +156,13 @@ for i in range(nTraces):
 
 
 plt.gca().invert_yaxis()
-plt.xlabel("Reflectivity")
+# plt.xlabel("Reflectivity")
 plt.ylabel("Two-way time (ms)")
 
 # trace display
 fig2 = plt.figure(figsize=(4,4), alpha=.45)
 # fig2.suptitle('Convolved')
-plt.xlabel("Synthetic trace")
+# plt.xlabel("Trace #")
 plt.ylabel("Two-way time (ms)")
 
 plt.subplot(111)
@@ -181,7 +187,7 @@ with col2:
     st.pyplot(fig1) 
 
 with col3:
-    st.subheader('Synthetic trace')
+    st.subheader('Synthetic traces')
     st.pyplot(fig2)
 
 
