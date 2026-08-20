@@ -35,7 +35,8 @@ with col200:
 with col300:
     st.subheader('Synthetic traces')
     envelope = st.checkbox('Envelope')
-    scl = st.slider('Display trace scalar', value=1.5, min_value=0.2, max_value=10., step=0.1, format="%.1f")     
+    # scl = st.slider('Display trace scalar', value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
+    scl = st.number_input('Display trace scalar', min_value=0.2, max_value=10., value=1.3, step=0.1)    
 
 str1 = "Ricker wavelet " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
 # st.subheader(str1)
