@@ -25,14 +25,17 @@ def ricker(f, length=0.512, dt=0.001):
 
 col100, col200, col300 = st.columns(3)
 with col100:
-         f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
-         phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
-with col200:
-        # phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")
-        dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
-        wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
+    st.subheader("Wavelet parameters")
+    f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+    phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
+with col200:      
+    st.subheader('Reflectivity')
+    dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
+    wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
 with col300:
-    envelope = st.checkbox('Envelope')    
+    st.subheader('Synthetic traces')
+    envelope = st.checkbox('Envelope')
+    scl = st.slider('Display trace scalar', value=1.5, min_value=0.2, max_value=10., step=0.1, format="%.1f")     
 
 str1 = "Ricker wavelet " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
 # st.subheader(str1)
@@ -45,10 +48,7 @@ t, y = ricker (f)
 
 with col1:
     # envelope = st.checkbox('Envelope')
-    st.subheader(str1)
-    st.latex(r'''
-    A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
-    ''') 
+
 
     
     z= hilbert(y) #form the analytical signal
@@ -83,9 +83,15 @@ with col1:
         # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
         fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red', width=2)))
 
-        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True))
+        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=500, height=400, margin=dict(t=10, b=10))
         st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
+        # st.subheader(str1)
+
+        st.latex(r'''
+        A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
+        ''') 
+        st.write(f"**{str1}**")
 
 length1 = 0.6
 dt1=0.001
@@ -136,7 +142,7 @@ for j in range(nTraces):
         y1[ni] = rf
 
     refl_arr.append(y1)
-    y2 = 1.5*np.convolve(refl_arr[j], x_rotate, mode='same')
+    y2 = scl*np.convolve(refl_arr[j], x_rotate, mode='same')
 
     # print('y1 size: ', y1.size)
     # print('y2 size: ', y2.size)
@@ -147,7 +153,7 @@ for j in range(nTraces):
 
     trace_arr.append(y2)
 # reflectivity plot
-fig1 = plt.figure(figsize=(4,4))
+fig1 = plt.figure(figsize=(4,3))
 
 plt.subplot(111)
 # plt.plot(y1, x1)
@@ -161,19 +167,13 @@ plt.gca().invert_yaxis()
 plt.ylabel("Two-way time (ms)")
 
 # trace display
-fig2 = plt.figure(figsize=(4,4), alpha=.45)
+fig2 = plt.figure(figsize=(4,3), alpha=.45)
 # fig2.suptitle('Convolved')
 # plt.xlabel("Trace #")
 plt.ylabel("Two-way time (ms)")
 
 plt.subplot(111)
-# plt.plot(y2, x1)
-# plt.plot(y2 + 1., x1, color='tab:blue')
 
-# y2pos = np.maximum(0,y2)
- 
-# plt.fill_betweenx(x1, y2pos, 0,  color='navy', alpha=.6)
-# plt.fill_betweenx(x1, y2pos + 1., 1.,  color='navy', alpha=.6)
 
 for i in range(nTraces):
     plt.plot(trace_arr[i] + i, 1000*x1, color='tab:blue', alpha=.45)
@@ -184,14 +184,12 @@ for i in range(nTraces):
 plt.gca().invert_yaxis()
 
 with col2:
-    st.subheader('Reflectivity')
     st.pyplot(fig1) 
 
 with col3:
-    st.subheader('Synthetic traces')
     st.pyplot(fig2)
 
 
-
-url1 = "https://www.rmseismic.com/lasviewer.html"
-st.write("More geophysical apps: [rmseismic.com](%s)" % url1)
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    url1 = "https://www.rmseismic.com/lasviewer.html"
+    st.write("More geophysical apps: [rmseismic.com](%s)" % url1)
