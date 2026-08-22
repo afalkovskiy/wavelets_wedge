@@ -70,7 +70,8 @@ with col1:
     phase = phi * pi/180
     x_rotate = math.cos(phase)*z.real - math.sin(phase)*z.imag
 
-fig = go.Figure()
+# fig = go.Figure()
+fig0 = plt.figure(figsize=(4,2.8), alpha=.45)
 with col100:
 
     st.latex(r'''
@@ -79,11 +80,6 @@ with col100:
     st.subheader(f"**{str1}**")
 
 with col1:
-
-    # st.latex(r'''
-    # A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
-    # ''') 
-    # st.write(f"**{str1}**")
 
     if envelope:
         chart_data = pd.DataFrame(
@@ -106,10 +102,13 @@ with col1:
         )
 
         # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
-        fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red')))
 
-        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=400, height=200, margin=dict(t=10, b=10))
-        st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
+        # fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red')))
+        # fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=400, height=200, margin=dict(t=10, b=10))
+        # st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
+
+        plt.plot(chart_data['t'], chart_data['y'], color='tab:red', alpha=.45)
+        st.pyplot(fig0) 
 
 
 
