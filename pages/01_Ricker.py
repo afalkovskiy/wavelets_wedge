@@ -108,12 +108,13 @@ with col1:
         # st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
         plt.plot(chart_data['t'], chart_data['y'], color='tab:red', alpha=.45)
+        plt.grid()
         st.pyplot(fig0) 
 
 
 
-    st.slider('Phase rotation angle (deg)', key="phi", value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
-    st.slider('Frequency from [1, 240] Hz', key="f", value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+    st.slider('Wavelet phase rotation (deg)', key="phi", value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
+    st.slider('Wavelet dominant requency [1, 240] Hz', key="f", value=25., min_value=1., max_value=240., step=1., format="%.1f") 
 
 
 
