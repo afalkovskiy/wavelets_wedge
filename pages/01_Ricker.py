@@ -16,7 +16,6 @@ refl_arr =[]
 
 st.title(r"Ricker wavelet: Wedge model")
 
-
 def ricker(f, length=0.512, dt=0.001):
     t = np.linspace(-length/2, (length-dt)/2, int(length/dt))
     y = (1.-2.*(np.pi**2)*(f**2)*(t**2))*np.exp(-(np.pi**2)*(f**2)*(t**2))
@@ -26,8 +25,16 @@ def ricker(f, length=0.512, dt=0.001):
 col100, col200, col300 = st.columns(3)
 with col100:
     st.subheader("Wavelet parameters")
-    f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
-    phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
+    # f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+    # phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f") 
+    if "f" not in st.session_state:
+        st.session_state["f"] = 25.
+    f = st.session_state["f"]  
+
+    if "phi" not in st.session_state:
+        st.session_state["phi"] = 0.
+    phi = st.session_state["phi"]  
+            
 with col200:      
     st.subheader('Reflectivity')
     dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
@@ -38,7 +45,7 @@ with col300:
     # scl = st.slider('Display trace scalar', value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
     scl = st.number_input('Display trace scalar', min_value=0.2, max_value=10., value=1.3, step=0.1)    
 
-str1 = "Ricker wavelet " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
+str1 = "Ricker " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
 # st.subheader(str1)
 
 col1, col2, col3 = st.columns(3)
@@ -60,7 +67,20 @@ with col1:
     x_rotate = math.cos(phase)*z.real - math.sin(phase)*z.imag
 
 fig = go.Figure()
+with col100:
+
+    st.latex(r'''
+    A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
+    ''') 
+    st.subheader(f"**{str1}**")
+
 with col1:
+
+    # st.latex(r'''
+    # A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
+    # ''') 
+    # st.write(f"**{str1}**")
+
     if envelope:
         chart_data = pd.DataFrame(
            {
@@ -82,17 +102,18 @@ with col1:
         )
 
         # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
-        fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red', width=2)))
+        fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red')))
 
-        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=500, height=400, margin=dict(t=10, b=10))
+        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=500, height=300, margin=dict(t=10, b=10))
         st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
-        # st.subheader(str1)
 
-        st.latex(r'''
-        A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
-        ''') 
-        st.write(f"**{str1}**")
+
+    st.slider('Frequency from [1, 240] Hz', key="f", value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+    st.slider('Phase rotation angle (deg)', key="phi", value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
+
+
+
 
 length1 = 0.6
 dt1=0.001
@@ -145,16 +166,10 @@ for j in range(nTraces):
     refl_arr.append(y1)
     y2 = scl*np.convolve(refl_arr[j], x_rotate, mode='same')
 
-    # print('y1 size: ', y1.size)
-    # print('y2 size: ', y2.size)
-    # print('x_rotate size: ', x_rotate.size)
-
-
-
 
     trace_arr.append(y2)
 # reflectivity plot
-fig1 = plt.figure(figsize=(4,3))
+fig1 = plt.figure(figsize=(4,2.8))
 
 plt.subplot(111)
 # plt.plot(y1, x1)
@@ -168,7 +183,7 @@ plt.gca().invert_yaxis()
 plt.ylabel("Two-way time (ms)")
 
 # trace display
-fig2 = plt.figure(figsize=(4,3), alpha=.45)
+fig2 = plt.figure(figsize=(4,2.8), alpha=.45)
 # fig2.suptitle('Convolved')
 # plt.xlabel("Trace #")
 plt.ylabel("Two-way time (ms)")
