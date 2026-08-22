@@ -42,8 +42,12 @@ with col200:
 with col300:
     st.subheader('Synthetic traces')
     envelope = st.checkbox('Envelope')
-    # scl = st.slider('Display trace scalar', value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
-    scl = st.number_input('Display trace scalar', min_value=0.2, max_value=10., value=1.3, step=0.1)    
+    # scl = st.slider('Trace scalar', value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
+    # scl = st.number_input('Display trace scalar', min_value=0.2, max_value=10., value=1.3, step=0.1)    
+if "scl" not in st.session_state:
+    st.session_state["scl"] = 1.3 
+          
+scl = st.session_state["scl"]
 
 str1 = "Ricker " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
 # st.subheader(str1)
@@ -104,14 +108,13 @@ with col1:
         # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
         fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red')))
 
-        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=500, height=300, margin=dict(t=10, b=10))
+        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=400, height=200, margin=dict(t=10, b=10))
         st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
 
 
-    st.slider('Frequency from [1, 240] Hz', key="f", value=25., min_value=1., max_value=240., step=1., format="%.1f") 
     st.slider('Phase rotation angle (deg)', key="phi", value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
-
+    st.slider('Frequency from [1, 240] Hz', key="f", value=25., min_value=1., max_value=240., step=1., format="%.1f") 
 
 
 
@@ -204,8 +207,9 @@ with col2:
 
 with col3:
     st.pyplot(fig2)
+    st.slider('Trace scalar', key="scl", value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
 
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    # st.markdown("<br>", unsafe_allow_html=True)
     url1 = "https://www.rmseismic.com/lasviewer.html"
     st.write("More geophysical apps: [rmseismic.com](%s)" % url1)
