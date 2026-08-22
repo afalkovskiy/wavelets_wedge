@@ -71,7 +71,7 @@ with col1:
     x_rotate = math.cos(phase)*z.real - math.sin(phase)*z.imag
 
 # fig = go.Figure()
-fig0 = plt.figure(figsize=(4,2.8), alpha=.45)
+fig0 = plt.figure(figsize=(4,2.4), alpha=.45)
 with col100:
 
     st.latex(r'''
@@ -91,7 +91,11 @@ with col1:
                "y_env3": -1*inst_amplitude
            }
         )
-        st.line_chart(chart_data, x="t", y=["y", "y_env2", "y_env3"], color=["#d62728", "#D3D3D3", "#D3D3D3"], width=450, height=450)
+        # st.line_chart(chart_data, x="t", y=["y", "y_env2", "y_env3"], color=["#d62728", "#D3D3D3", "#D3D3D3"], width=450, height=450)
+
+        plt.plot(chart_data['t'], chart_data['y'], color='tab:red', alpha=.45)
+        plt.plot(chart_data['t'], chart_data['y_env2'], color='tab:grey', alpha=.45)
+        plt.plot(chart_data['t'], chart_data['y_env3'], color='tab:grey', alpha=.45)      
     
     else:
         chart_data = pd.DataFrame(
@@ -108,13 +112,13 @@ with col1:
         # st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
         plt.plot(chart_data['t'], chart_data['y'], color='tab:red', alpha=.45)
-        plt.grid()
-        st.pyplot(fig0) 
+    plt.grid()
+    st.pyplot(fig0) 
 
 
 
-    st.slider('Wavelet phase rotation (deg)', key="phi", value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
-    st.slider('Wavelet dominant requency [1, 240] Hz', key="f", value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+    st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f")  
+    st.slider('Dominant requency [1, 240] Hz', key="f", min_value=1., max_value=240., step=1., format="%.1f") 
 
 
 
@@ -172,7 +176,7 @@ for j in range(nTraces):
 
     trace_arr.append(y2)
 # reflectivity plot
-fig1 = plt.figure(figsize=(4,2.8))
+fig1 = plt.figure(figsize=(4,2.7))
 
 plt.subplot(111)
 # plt.plot(y1, x1)
@@ -186,7 +190,7 @@ plt.gca().invert_yaxis()
 plt.ylabel("Two-way time (ms)")
 
 # trace display
-fig2 = plt.figure(figsize=(4,2.8), alpha=.45)
+fig2 = plt.figure(figsize=(4,2.7), alpha=.45)
 # fig2.suptitle('Convolved')
 # plt.xlabel("Trace #")
 plt.ylabel("Two-way time (ms)")
@@ -207,7 +211,7 @@ with col2:
 
 with col3:
     st.pyplot(fig2)
-    st.slider('Trace scalar', key="scl", value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
+    st.slider('Trace scalar', key="scl", min_value=0.2, max_value=10., step=0.1, format="%.1f")
 
 
     # st.markdown("<br>", unsafe_allow_html=True)
