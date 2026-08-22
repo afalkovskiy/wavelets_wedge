@@ -15,6 +15,10 @@ trace_arr =[]
 refl_arr =[]
 
 st.title(r"Ormsby wavelet: Wedge model")
+st.latex(r'''
+    A(t) = \frac{\pi f_4^2 sinc^2 (\pi f_4 t) - \pi f_3^2 sinc^2 (\pi f_3 t)}{f_4 - f_3} 
+    - \frac{\pi f_2^2 sinc^2 (\pi f_2 t) - \pi f_1^2 sinc^2 (\pi f_1 t)}{f_2 - f_1}
+    ''') 
 
 def ricker(f, length=0.512, dt=0.001):
     t = np.linspace(-length/2, (length-dt)/2, int(length/dt))
@@ -35,46 +39,45 @@ def ORMSBY(f1=5., f2=10., f3=40., f4=45., length=0.512, dt=0.001):
 col100, col200, col300 = st.columns(3)
 with col100:
     st.subheader("Wavelet parameters")
-    f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
-    phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")  
+    envelope = st.checkbox('Envelope')
+    # f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
+    # phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f") 
+    if "f" not in st.session_state:
+        st.session_state["f"] = 25.
+    f = st.session_state["f"]  
+
+    if "phi" not in st.session_state:
+        st.session_state["phi"] = 0.
+    phi = st.session_state["phi"]  
+
+
+    if "f12" not in st.session_state:
+        st.session_state["f12"] = (5., 10.)
+    f1, f2 = st.session_state["f12"]  
+
+    if "f34" not in st.session_state:
+        st.session_state["f34"] = (60., 70.)
+    f3, f4 = st.session_state["f34"] 
+
+            
 with col200:      
     st.subheader('Reflectivity')
     dr = 0.001 * st.slider('Reflector interval (ms)', value=100, min_value=10, max_value=200, step=1) #, format="%.2f")
-    wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
+
 with col300:
     st.subheader('Synthetic traces')
-    envelope = st.checkbox('Envelope')
-    # scl = st.slider('Display trace scalar', value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
-    scl = st.number_input('Display trace scalar', min_value=0.2, max_value=10., value=1.3, step=0.1)    
+    # envelope = st.checkbox('Envelope')
+    wedge_shift = st.slider('Wedge shift per trace (ms)', min_value=0, max_value=20, value=3, step=1)
+    # scl = st.slider('Trace scalar', value=1.3, min_value=0.2, max_value=10., step=0.1, format="%.1f")
+    # scl = st.number_input('Display trace scalar', min_value=0.2, max_value=10., value=1.3, step=0.1)    
+if "scl" not in st.session_state:
+    st.session_state["scl"] = 1.3 
+          
+scl = st.session_state["scl"]
 
-# str1 = "Ricker wavelet " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
-
-# st.subheader(str1)
-col100, col200, col300, col400 = st.columns(4)
-with col100:
-    f1 = st.slider('f1 (Hz)', value=5., min_value=1., max_value=240., step=1., format="%.1f")
-    #phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")
-
-with col200:
-    f2 = st.slider('f2 (Hz)', value=10., min_value=1., max_value=240., step=1., format="%.1f")
-    #envelope = st.checkbox('Display wavelet envelope')
-    # st.write("Rotate phase:")
-
-with col300:
-    f3 = st.slider('f3 (Hz)', value=60., min_value=1., max_value=240., step=1., format="%.1f")
-
-with col400:
-    f4 = st.slider('f4 (Hz)', value=70., min_value=1., max_value=240., step=1., format="%.1f")
-
-# with col500:
-#     phi = st.slider('Phase (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f")
-
-# with col600:
-#     envelope = st.checkbox('Envelope')
-
+# str1 = "Ricker " + str(int(f + 0.5)) + " Hz, φ = " + str(int(phi+0.5)) + "°"
 str1 = "Ormsby " + str(int(f1 + 0.5)) + " - " + str(int(f2 + 0.5))  + " - " + str(int(f3 + 0.5)) + " - " + str(int(f4 + 0.5)) + " Hz, Phase " + str(int(phi+0.5)) + "°"
-
-
+# st.subheader(str1)
 
 col1, col2, col3 = st.columns(3)
 # with col1:
@@ -95,8 +98,18 @@ with col1:
     phase = phi * pi/180
     x_rotate = math.cos(phase)*z.real - math.sin(phase)*z.imag
 
-fig = go.Figure()
+# fig = go.Figure()
+fig0 = plt.figure(figsize=(4,1.7), alpha=.45)
+with col100:
+
+    # st.latex(r'''
+    #     A(t) = \frac{\pi f_4^2 sinc^2 (\pi f_4 t) - \pi f_3^2 sinc^2 (\pi f_3 t)}{f_4 - f_3} \\
+    #     - \frac{\pi f_2^2 sinc^2 (\pi f_2 t) - \pi f_1^2 sinc^2 (\pi f_1 t)}{f_2 - f_1}
+    #     ''') 
+    st.subheader(f"**{str1}**")
+
 with col1:
+
     if envelope:
         chart_data = pd.DataFrame(
            {
@@ -107,7 +120,11 @@ with col1:
                "y_env3": -1*inst_amplitude
            }
         )
-        st.line_chart(chart_data, x="t", y=["y", "y_env2", "y_env3"], color=["#d62728", "#D3D3D3", "#D3D3D3"], width=450, height=450)
+        # st.line_chart(chart_data, x="t", y=["y", "y_env2", "y_env3"], color=["#d62728", "#D3D3D3", "#D3D3D3"], width=450, height=450)
+
+        plt.plot(chart_data['t'], chart_data['y'], color='tab:red', alpha=.45)
+        plt.plot(chart_data['t'], chart_data['y_env2'], color='tab:grey', alpha=.45)
+        plt.plot(chart_data['t'], chart_data['y_env3'], color='tab:grey', alpha=.45)      
     
     else:
         chart_data = pd.DataFrame(
@@ -117,23 +134,17 @@ with col1:
            }
         )
 
-        # st.line_chart(chart_data, x="t", y=["y"], color=["#d62728"])
-        fig.add_trace(go.Scatter(x=chart_data['t'], y=chart_data['y'], mode='lines', hoverinfo='none', line=dict(color='red', width=2)))
+        plt.plot(chart_data['t'], chart_data['y'], color='tab:red', alpha=.45)
+    plt.grid()
+    st.pyplot(fig0) 
 
-        fig.update_layout(xaxis=dict(fixedrange=True), yaxis=dict(fixedrange=True), width=500, height=400, margin=dict(t=10, b=10))
-        st.plotly_chart(fig, config={'scrollZoom': False, 'displayModeBar': False})
 
-        # st.subheader(str1)
 
-        # st.latex(r'''
-        # A(t) = (1-2\pi^2 f^2 t^2)e^{-\pi^2 f^2 t^2}
-        # ''') 
-        st.latex(r'''
-            Ormsby(t) = \frac{\pi f_4^2 sinc^2 (\pi f_4 t) - \pi f_3^2 sinc^2 (\pi f_3 t)}{f_4 - f_3}  
-            - \frac{\pi f_2^2 sinc^2 (\pi f_2 t) - \pi f_1^2 sinc^2 (\pi f_1 t)}{f_2 - f_1}
-            ''') 
+    st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f")  
+    # st.slider('Dominant requency [1, 240] Hz', key="f", min_value=1., max_value=240., step=1., format="%.1f") 
+    st.slider(' f1 - f2 (Hz)', key="f12", min_value=1., max_value=120., step=1., format="%.1f")
+    st.slider(' f3 - f4 (Hz)', key="f34", min_value=f2, max_value=120., step=1., format="%.1f")
 
-        st.write(f"**{str1}**")
 
 length1 = 0.6
 dt1=0.001
@@ -189,7 +200,7 @@ for j in range(nTraces):
 
     trace_arr.append(y2)
 # reflectivity plot
-fig1 = plt.figure(figsize=(4,3))
+fig1 = plt.figure(figsize=(4,2.7))
 
 plt.subplot(111)
 # plt.plot(y1, x1)
@@ -203,7 +214,7 @@ plt.gca().invert_yaxis()
 plt.ylabel("Two-way time (ms)")
 
 # trace display
-fig2 = plt.figure(figsize=(4,3), alpha=.45)
+fig2 = plt.figure(figsize=(4,2.7), alpha=.45)
 # fig2.suptitle('Convolved')
 # plt.xlabel("Trace #")
 plt.ylabel("Two-way time (ms)")
@@ -224,8 +235,9 @@ with col2:
 
 with col3:
     st.pyplot(fig2)
+    st.slider('Trace scalar', key="scl", min_value=0.2, max_value=10., step=0.1, format="%.1f")
 
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    # st.markdown("<br>", unsafe_allow_html=True)
     url1 = "https://www.rmseismic.com/lasviewer.html"
     st.write("More geophysical apps: [rmseismic.com](%s)" % url1)
