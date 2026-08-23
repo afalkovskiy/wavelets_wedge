@@ -140,8 +140,8 @@ with col1:
 
 
 
-    st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f")  
-    # st.slider('Dominant requency [1, 240] Hz', key="f", min_value=1., max_value=240., step=1., format="%.1f") 
+    # st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f")  
+
     st.slider(' f1 - f2 (Hz)', key="f12", min_value=1., max_value=120., step=1., format="%.1f")
     st.slider(' f3 - f4 (Hz)', key="f34", min_value=f2, max_value=120., step=1., format="%.1f")
 
@@ -210,13 +210,10 @@ for i in range(nTraces):
 
 
 plt.gca().invert_yaxis()
-# plt.xlabel("Reflectivity")
 plt.ylabel("Two-way time (ms)")
 
 # trace display
 fig2 = plt.figure(figsize=(4,2.7), alpha=.45)
-# fig2.suptitle('Convolved')
-# plt.xlabel("Trace #")
 plt.ylabel("Two-way time (ms)")
 
 plt.subplot(111)
@@ -232,6 +229,7 @@ plt.gca().invert_yaxis()
 
 with col2:
     st.pyplot(fig1) 
+    st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f")  
 
 with col3:
     st.pyplot(fig2)
