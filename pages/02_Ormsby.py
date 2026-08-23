@@ -40,6 +40,7 @@ col100, col200, col300 = st.columns(3)
 with col100:
     st.subheader("Wavelet parameters")
     envelope = st.checkbox('Envelope')
+    st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f") 
     # f = st.slider('Frequency from [1, 240] Hz', value=25., min_value=1., max_value=240., step=1., format="%.1f") 
     # phi = st.slider('Phase rotation angle (deg)', value=0.0, min_value=0., max_value=360., step=45., format="%.1f") 
     if "f" not in st.session_state:
@@ -100,7 +101,7 @@ with col1:
 
 # fig = go.Figure()
 fig0 = plt.figure(figsize=(4,1.7), alpha=.45)
-with col100:
+with col1:
 
     # st.latex(r'''
     #     A(t) = \frac{\pi f_4^2 sinc^2 (\pi f_4 t) - \pi f_3^2 sinc^2 (\pi f_3 t)}{f_4 - f_3} \\
@@ -229,7 +230,6 @@ plt.gca().invert_yaxis()
 
 with col2:
     st.pyplot(fig1) 
-    st.slider('Wavelet phase rotation (deg)', key="phi", min_value=0., max_value=360., step=45., format="%.1f")  
 
 with col3:
     st.pyplot(fig2)
